@@ -13,7 +13,7 @@ def test_run_b(login_set_up) -> None:
     page = login_set_up
     #   home_page=HomePage()
 
-    assert not page.is_visible(HomePage.celebrate_beauty_header)
+    assert page.is_visible(HomePage.celebrate_beauty_header)
     assert page.is_visible(HomePage.celebrate_beauty_body)
 
 
