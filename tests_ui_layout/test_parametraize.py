@@ -1,21 +1,22 @@
-import re
 import time
 
 import pytest
 from playwright.sync_api import Playwright, sync_playwright, expect
 
-import utils.secret_config
 
-
-@pytest.mark.smoke
-@pytest.mark.regression
-def test_login(login_set_up) -> None:
+@pytest.mark.parametrize("email", ["Keepitnice1990@gmail.com",
+                                             pytest.param("fakeemail", marks=pytest.mark.xfail),
+                                             pytest.param("Keepitnice1990@gmail", marks=pytest.mark.xfail)])
+@pytest.mark.parametrize("password", ["Asdfg12345!",
+                                             pytest.param("fakepassword", marks=pytest.mark.xfail),
+                                             "Asdfg12345!"])
+def test_login_para(page, email, password) -> None:
         #browser = playwright.chromium.launch(headless=False, slow_mo=1000)
         #context = browser.new_context()
-        page= login_set_up
+        #page= login_set_up
         #page = context.new_page()
-        #page.goto("https://symonstorozhenko.wixsite.com/website-1")
-        #page.set_default_timeout(14000)
+        page.goto("https://symonstorozhenko.wixsite.com/website-1")
+        page.set_default_timeout(2000)
         login_issue = True
         while login_issue:
             if not page.is_visible("[data-testid=\"signUp.switchToSignUp\"]"):
@@ -48,18 +49,13 @@ def test_login(login_set_up) -> None:
         page.click("[data-testid='switchToEmailLink'] >> [data-testid='buttonElement']")
         # page.click("[data-testid='siteMembers.container'] input[type='email']")
         # page.fill("[data-testid='siteMembers.container'] input[type='email']", "symon.storozhenko@gmail.com")
-        page.fill('input:below(:text("Email"))', "Keepitnice1990@gmail.com")
+        page.fill('input:below(:text("Email"))', email)
         page.press("[data-testid='siteMembers.container'] >> input[type='email']", "Tab")
-        page.fill("input[type='password']", 'Asdfg12345!')
+        page.fill("input[type='password']", password)
         page.click("[data-testid='submit'] >> [data-testid='buttonElement']")
-
-
-        assert page.is_visible("text= Home")
-
-        # ---------------------
-        #context.close()
-        #browser.close()
-
-
-    #with sync_playwright() as playwright:
-     #   run(playwright)
+        page.wait_for_load_state()
+        page.expect_navigation(url="https://symonstorozhenko.wixsite.com/website-1",
+                               wait_until="domcontentloaded",
+                               timeout=5000)
+        page.wait_for_selector("[aria-label=\"symon.storozhenkoaccount menu\"]")
+        assert not page.is_visible("text=Log In")
