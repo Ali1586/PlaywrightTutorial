@@ -3,7 +3,7 @@ from pom.shopwomen_element import Shop_women
 
 
 def run(playwright: Playwright) -> None:
-        browser = playwright.chromium.launch(headless=False)
+        browser = playwright.chromium.launch()
         page = browser.new_context()
         page.goto("https://symonstorozhenko.wixsite.com/website-1")
         shop_women= Shop_women(page)
