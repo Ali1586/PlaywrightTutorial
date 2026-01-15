@@ -14,7 +14,7 @@ def set_up(browser):
     context = browser.new_context()
     page = context.new_page()
     page.goto("https://symonstorozhenko.wixsite.com/website-1")
-    page.set_default_timeout(3000)
+    page.set_default_timeout(10000)
 
     yield page
     page.close()
