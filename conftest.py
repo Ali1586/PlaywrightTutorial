@@ -1,3 +1,5 @@
+import os
+
 import utils.secret_config
 import time
 
@@ -6,6 +8,12 @@ import pytest
 from playwright.sync_api import Playwright
 import pytest
 
+
+try:
+    PASSWORD = os.environ['PASSWORD']
+except KeyError:
+    import utils.secret_config
+    PASSWORD = utils.secret_config.PASSWORD
 
 
 @pytest.fixture(scope="session")
@@ -40,7 +48,9 @@ def login_set_up(set_up):
     # page.fill("[data-testid='siteMembers.container'] input[type='email']", "symon.storozhenko@gmail.com")
     page.fill('input:below(:text("Email"))', "Keepitnice1990@gmail.com")
     page.press("[data-testid='siteMembers.container'] >> input[type='email']", "Tab")
-    page.fill("input[type='password']", utils.secret_config.PASSWORD)
+    #page.fill("input[type='password']", utils.secret_config.PASSWORD)
+    page.fill("input[type='password']", os.environ['PASSWORD'])
+
     page.click("[data-testid='submit'] >> [data-testid='buttonElement']")
 
     yield page
